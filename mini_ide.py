@@ -18,7 +18,6 @@ def show_sinhala_error_popup(error_text):
         if key in error_text:
             sinhala_msg = value
             break
-    # Popup එක පෙන්වන්න
     popup_root = tk.Tk()
     popup_root.withdraw()
     messagebox.showinfo(
@@ -122,9 +121,7 @@ def read_output():
     if stderr_line:
         output_text.insert(tk.END, stderr_line)
         output_text.see(tk.END)
-        # Assistant tab එකට සිංහල පැහැදිලි කිරීම
         assistant_text.insert(tk.END, explain_error(stderr_line))
-        # Popup එකත් පෙන්වන්න
         show_sinhala_error_popup(stderr_line)
     
     if current_process.poll() is None:
@@ -200,7 +197,6 @@ def main():
     menubar = tk.Menu(root)
     root.config(menu=menubar)
     
-    # File menu
     file_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="File", menu=file_menu)
     file_menu.add_command(label="New", accelerator="Ctrl+N", command=new_file)
@@ -210,7 +206,6 @@ def main():
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=root.quit)
     
-    # Edit menu
     edit_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Edit", menu=edit_menu)
     edit_menu.add_command(label="Undo", accelerator="Ctrl+Z", command=undo)
@@ -222,13 +217,11 @@ def main():
     edit_menu.add_separator()
     edit_menu.add_command(label="Find...", accelerator="Ctrl+F", command=find)
     
-    # Run menu
     run_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Run", menu=run_menu)
     run_menu.add_command(label="Run Script", accelerator="F5", command=run_code)
     run_menu.add_command(label="Stop", accelerator="F6", command=stop_code)
     
-    # Help menu
     help_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Help", menu=help_menu)
     help_menu.add_command(label="About", command=lambda: messagebox.showinfo("About", "Netra IDE\nThonny Style + Sinhala Error Assistant"))
@@ -243,17 +236,19 @@ def main():
     btn_open.pack(side=tk.LEFT, padx=2, pady=2)
     btn_save = tk.Button(toolbar, text="Save", command=save_file)
     btn_save.pack(side=tk.LEFT, padx=2, pady=2)
-    tk.Separator(toolbar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=2)
+    
+    # FIXED: ttk.Separator instead of tk.Separator
+    ttk.Separator(toolbar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=2)
+    
     btn_run = tk.Button(toolbar, text="Run", bg="#4caf50", fg="white", command=run_code)
     btn_run.pack(side=tk.LEFT, padx=2, pady=2)
     btn_stop = tk.Button(toolbar, text="Stop", bg="#f44336", fg="white", command=stop_code)
     btn_stop.pack(side=tk.LEFT, padx=2, pady=2)
     
-    # ========== PANED WINDOW (Editor top, Notebook bottom) ==========
+    # ========== PANED WINDOW ==========
     main_pane = tk.PanedWindow(root, orient=tk.VERTICAL, sashrelief=tk.RAISED, sashwidth=5)
     main_pane.pack(fill=tk.BOTH, expand=True)
     
-    # Editor frame
     editor_frame = tk.Frame(main_pane)
     main_pane.add(editor_frame, stretch="always", height=400)
     
@@ -264,17 +259,14 @@ def main():
     code_scroll.config(command=code_text.yview)
     code_text.config(yscrollcommand=code_scroll.set)
     
-    # Bottom notebook
     bottom_notebook = ttk.Notebook(main_pane)
     main_pane.add(bottom_notebook, stretch="always", height=250)
     
-    # Shell tab (output)
     shell_frame = tk.Frame(bottom_notebook)
     bottom_notebook.add(shell_frame, text="Shell")
     output_text = tk.Text(shell_frame, bg="black", fg="lime", font=("Consolas", 9), insertbackground="white")
     output_text.pack(fill=tk.BOTH, expand=True)
     
-    # Assistant tab (error explanation in Sinhala)
     assistant_frame = tk.Frame(bottom_notebook)
     bottom_notebook.add(assistant_frame, text="Assistant")
     assistant_text = tk.Text(assistant_frame, bg="#1e1e1e", fg="white", font=("Segoe UI", 11), wrap="word")
@@ -294,7 +286,6 @@ def main():
     root.bind("<Control-v>", lambda e: paste())
     root.bind("<Control-f>", lambda e: find())
     
-    # ========== CLEANUP ==========
     def on_closing():
         if os.path.exists("temp.py"):
             os.remove("temp.py")
